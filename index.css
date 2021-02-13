@@ -1,0 +1,133 @@
+* {
+	box-sizing: border-box;
+
+	outline-offset: .5em;
+}
+
+body {
+	width: 100vw;
+	min-width: 40em;
+	height: 100vh;
+	margin: 0;
+	display: flex;
+	align-items: stretch;
+}
+
+body,
+input,
+button {
+	font-family: Overpass Mono, monospace;
+	font-size: 1em;
+}
+
+[v-cloak],
+.anticloak {
+	display: none;
+}
+
+[v-cloak].anticloak {
+	display: unset;
+}
+
+body > svg {
+	flex-grow: 3;
+
+	background: linear-gradient(#a2a, #fa2);
+}
+
+line {
+	stroke: #444;
+	stroke-width: .1;
+}
+
+g > rect {
+	fill: #0000;
+}
+
+g > circle {
+	fill: #dddc;
+}
+
+/* g:hover {
+	cursor: grab;
+} */
+
+g:hover > circle {
+	fill: #fff;
+	stroke: #000;
+	stroke-width: .2;
+}
+
+body > aside {
+	width: 20em;
+	flex-grow: 1;
+}
+
+aside {
+	--bg-color: #000;
+	--fg-color: #fff;
+
+	padding: 2em;
+	overflow-y: auto;
+
+	background: var(--bg-color);
+}
+
+aside,
+aside input {
+	color: var(--fg-color);
+}
+
+aside label {
+	display: block;
+
+	font-weight: 800;
+	font-size: 1.2em;
+}
+
+aside input {
+	padding: 0 0;
+	border: none;
+	border-bottom: 2px solid;
+
+	background: #0000;
+}
+
+aside input.error {
+	--fg-color: #f00;
+}
+
+aside button {
+	border: 2px solid;
+
+	background: #0000;
+	color: var(--fg-color);
+	line-height: 2;
+}
+
+aside button:hover {
+	--fg-color-translucent: #ffffff4f;
+	--checkerboard-repeat-size: 8px;
+	--checkerboard-offset-size: calc(var(--checkerboard-repeat-size) / 2);
+	--checkerboard-offset-size-neg: calc(var(--checkerboard-repeat-size) / -2);
+
+	background:
+			linear-gradient(45deg, var(--fg-color-translucent) 25%, #0000 25%),
+			linear-gradient(-45deg, var(--fg-color-translucent) 25%, #0000 25%),
+			linear-gradient(45deg, #0000 75%, var(--fg-color-translucent) 75%),
+			linear-gradient(-45deg, #0000 75%, var(--fg-color-translucent) 75%);
+	background-position:
+			0 0,
+			0 var(--checkerboard-offset-size),
+			var(--checkerboard-offset-size) var(--checkerboard-offset-size-neg),
+			var(--checkerboard-offset-size-neg) 0;
+	background-size: var(--checkerboard-repeat-size) var(--checkerboard-repeat-size);
+	color: unset;
+}
+
+aside button:active {
+	border: 2px solid var(--fg-color);
+
+	background: var(--fg-color);
+	color: var(--bg-color);
+}

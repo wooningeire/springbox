@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<link href="./index.css" rel="stylesheet" />
+		<script src="./index.js" type="module"></script>
+
+		<link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@400;800&display=swap" rel="stylesheet">
+	</head>
+
+	<body>
+		<svg viewbox="0 0 50 50">
+			<g id="space" transform="translate(25 25) scale(1, -1)">
+				<line id="line" x1="0" y1="0" x2="0" y2="0" />
+
+				<g id="disc-container">
+					<rect x="-10" y="-10" width="20" height="20" />
+
+					<circle r="1" />
+				</g>
+			</g>
+		</svg>
+
+		<aside> <!-- Vue -->
+			<noscript>I hunger for JavaScript. Please return with it to fulfill my needs</noscript>
+
+			<div id="loading" v-cloak>… loading …</div>
+
+			<section v-cloak>
+				<div><button @click="toggle">{{toggleButtonText}}</button></div>
+	
+				<br />
+	
+				<div><button @click="resetPosition">🔄&#xfe0e; Zero position</button></div>
+	
+				<br />
+
+				<label>Position</label>
+				<div>{{positionX}} m</div>
+				<div>{{positionY}} m</div>
+	
+				<br />
+
+				<label>Velocity</label>
+				<div>{{velocityX}} <sup>m</sup>⁄<sub>s</sub></div>
+				<div>{{velocityY}} <sup>m</sup>⁄<sub>s</sub></div>
+
+				<br />
+
+				<label>Mass</label>
+				<div>
+					<input type="number"
+							data-property-name="mass"
+							:value="mass"
+							@input="fieldInput"
+							@change="fieldChange" />
+
+					kg
+				</div>
+	
+				<br />
+	
+				<label>Spring constant</label>
+				<div>
+					<input type="number" step="4"
+							data-property-name="springRate"
+							:value="springRate"
+							@input="fieldInput"
+							@change="fieldChange" />
+
+					<sup>N</sup>⁄<sub>m</sub>
+				</div>
+	
+				<br />
+	
+				<label>Gravitational acceleration</label>
+				<div>
+					<input type="number" step="0.5"
+							data-property-name="gravityAccelerationX"
+							:value="gravityAccelerationX"
+							@input="fieldInput"
+							@change="fieldChange" />
+
+					<sup>m</sup>⁄<sub>s<sup>2</sup></sub>
+				</div>
+				<div>
+					<input type="number" step="0.5"
+							data-property-name="gravityAccelerationY"
+							:value="gravityAccelerationY"
+							@input="fieldInput"
+							@change="fieldChange" />
+
+					<sup>m</sup>⁄<sub>s<sup>2</sup></sub>
+				</div>
+	
+				<br />
+	
+				<label>Drag</label>
+				<div>
+					<input type="number" step="0.5"
+							data-property-name="drag"
+							:value="drag"
+							@input="fieldInput"
+							@change="fieldChange" />
+				</div>
+			</section>
+		</aside>
+
+		<script type="module">
+document.querySelector("#loading").classList.add("anticloak");
+		</script>
+	</body>
+</html>
