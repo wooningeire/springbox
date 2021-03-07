@@ -3,9 +3,9 @@ use wasm_bindgen::prelude::*;
 type Vec2 = [f32; 2];
 
 trait Vector<T> {
-	fn cis(angle: f32) -> T;
+/* 	fn cis(angle: f32) -> T;
 
-	fn angle_to(&self, other: &T) -> f32;
+	fn angle_to(&self, other: &T) -> f32; */
 	fn dist(&self, other: &T) -> f32;
 	fn scaled(&self, scalar: f32) -> T;
 	fn added(&self, other: &T) -> T;
@@ -13,19 +13,20 @@ trait Vector<T> {
 	fn mag(&self) -> f32;
 	fn normalized(&self) -> T;
 	fn with_mag(&self, mag: f32) -> T;
+	fn is_finite(&self) -> bool;
 }
 
 impl Vector<Vec2> for Vec2 {
-	fn cis(angle: f32) -> Vec2 {
+/* 	fn cis(angle: f32) -> Vec2 {
 		[angle.cos(), angle.sin()]
 	}
 
 	fn angle_to(&self, other: &Vec2) -> f32 {
 		(other[1] - self[1]).atan2(other[0] - self[0])
-	}
+	} */
 
 	fn dist(&self, other: &Vec2) -> f32 {
-		((other[0] - self[0]).powi(2) + (other[1] - self[1]).powi(2)).sqrt()
+		(other[0] - self[0]).hypot(other[1] - self[1])
 	}
 
 	fn scaled(&self, scalar: f32) -> Vec2 {
@@ -41,7 +42,7 @@ impl Vector<Vec2> for Vec2 {
 	}
 
 	fn mag(&self) -> f32 {
-		(self[0].powi(2) + self[1].powi(2)).sqrt()
+		self[0].hypot(self[1])
 	}
 
 	fn normalized(&self) -> Vec2 {
@@ -56,6 +57,10 @@ impl Vector<Vec2> for Vec2 {
 
 	fn with_mag(&self, mag: f32) -> Vec2 {
 		self.normalized().scaled(mag)
+	}
+
+	fn is_finite(&self) -> bool {
+		self[0].is_finite() && self[1].is_finite()
 	}
 }
 
@@ -81,7 +86,7 @@ impl BodyForces {
 	}
 
 	fn forces_on_body(&self, body: &Body) -> Vec2 {
-		let dist: f32 = self.spring_equilibrium_position.dist(&body.position);
+		let dist = self.spring_equilibrium_position.dist(&body.position);
 		
 		// F = k * x
 		let spring_force = self.spring_equilibrium_position.subtracted(&body.position).with_mag(self.spring_rate * dist);
@@ -201,7 +206,7 @@ impl Scene {
 	}
 
 	#[wasm_bindgen(getter, js_name = mass)]
-	pub fn get_mass(&mut self) -> f32 {
+	pub fn get_mass(&self) -> f32 {
 		self.body.mass
 	}
 
@@ -211,7 +216,7 @@ impl Scene {
 	}
 
 	#[wasm_bindgen(getter, js_name = springRate)]
-	pub fn get_spring_rate(&mut self) -> f32 {
+	pub fn get_spring_rate(&self) -> f32 {
 		self.environment.spring_rate
 	}
 
@@ -253,13 +258,12 @@ impl Scene {
 	}
 
 	#[wasm_bindgen(getter, js_name = drag)]
-	pub fn get_drag(&mut self) -> f32 {
+	pub fn get_drag(&self) -> f32 {
 		self.environment.drag
 	}
 
 	#[wasm_bindgen(js_name = hasFinitePosVel)]
-	pub fn has_finite_pos_vel(&mut self) -> bool {
-		self.body.position[0].is_finite() && self.body.position[1].is_finite() &&
-				self.body.velocity[0].is_finite() && self.body.velocity[1].is_finite()
+	pub fn has_finite_pos_vel(&self) -> bool {
+		self.body.position.is_finite() && self.body.velocity.is_finite()
 	}
 }

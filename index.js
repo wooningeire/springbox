@@ -52,9 +52,7 @@ function updateDisplayPosition(x, y) {
 	line.setAttribute("x2", x);
 	line.setAttribute("y2", y);
 
-	if (vue) {
-		vue.$forceUpdate();
-	}
+	vue?.$forceUpdate();
 }
 
 function updateDisplayPositionToSceneBody(sceneBody) {
@@ -169,6 +167,7 @@ function createEngine() {
 	vue = new Vue({
 		el: "aside",
 		data: {
+			// maybe DRY this
  			get positionX() {
 				return roundF32(engine.sceneBody.positionX);
 			},
