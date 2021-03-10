@@ -1,11 +1,35 @@
+image: rust:latest
+
+stages:
+    - build
+    - deploy
+
+build:
+    stage: build
+    before_script:
+        - curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+    script:
+        # rustwasm
+        - mkdir -p .public/.wasm
+        - cd rustwasm
+        - wasm-pack build --target web
+        - cd ..
+        - mv rustwasm/pkg/springbox_bg.wasm .public/.wasm/index.wasm
+        - mv rustwasm/pkg/springbox.js .public/.wasm/index.js
+        # static
+        - cp -r static/* .public
+    artifacts:
+        paths:
+            - .public
+    only:
+        - master
+
 pages:
-  stage: deploy
-  script:
-  - mkdir .public
-  - cp -r * .public
-  - mv .public public
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
+    stage: deploy
+    script:
+        - mv .public public
+    artifacts:
+        paths:
+            - public
+    only:
+        - master
