@@ -68,11 +68,11 @@ function createSceneTicker(sceneBody) {
 	let timeoutHandle = 0;
 	let animationFrameHandle = 0;
 
-	let prevTimeoutTime = 0;
+	let prevTimeoutTime = -Infinity;
 
 	return {
 		timeoutTickAction(now) {
-			const timestep = Math.min((now - prevTimeoutTime) / 1000, MAX_TIMESTEP);
+			const timestep = Math.max(0, Math.min(MAX_TIMESTEP, (now - prevTimeoutTime) / 1000));
 			sceneBody.tick(timestep);
 			
 			prevTimeoutTime = now;
