@@ -4,7 +4,7 @@ const WASM_URL = "./.wasm/index.wasm";
 
 //#region Arbitrary constants
 
-const DEFAULT_TIMESTEP = 1 / 60;
+const MAX_TIMESTEP = 1 / 30;
 const INITIAL_POSITION_RADIUS = 15;
 const INITIAL_VELOCITY_RADIUS = 240;
 const INITIAL_MASS = 1;
@@ -65,15 +65,17 @@ function updateDisplayPositionToSceneBody(sceneBody) {
 //#region Factories
 
 function createSceneTicker(sceneBody) {
-	let animationFrameHandle = null;
+	let timeoutHandle = 0;
+	let animationFrameHandle = 0;
+
+	let prevTimeoutTime = 0;
 
 	return {
-		tickAction() {
-			// const timeNow = Date.now();
-			// scene.tick((timeNow - timePrevious) / 1000);
-			sceneBody.tick(DEFAULT_TIMESTEP);
+		timeoutTickAction(now) {
+			const timestep = Math.min((now - prevTimeoutTime) / 1000, MAX_TIMESTEP);
+			sceneBody.tick(timestep);
 			
-			// timePrevious = timeNow;
+			prevTimeoutTime = now;
 
 			// Failsafe
 			if (!sceneBody.hasFinitePosVel()) {
@@ -81,25 +83,40 @@ function createSceneTicker(sceneBody) {
 				sceneBody.setVelocity(0, 0);
 			}
 	
+			this.timeoutTick();
+		},
+
+		animationFrameTickAction() {
 			updateDisplayPositionToSceneBody(sceneBody);
-	
-			this.tick();
+
+			this.animationFrameTick();
+		},
+
+		timeoutTick() {
+			timeoutHandle = setTimeout(() => this.timeoutTickAction(Date.now()));
+		},
+
+		animationFrameTick() {
+			animationFrameHandle = requestAnimationFrame(() => this.animationFrameTickAction());
 		},
 
 		tick() {
-			animationFrameHandle = requestAnimationFrame(() => this.tickAction());
+			this.timeoutTick();
+			this.animationFrameTick();
 		},
 
 		cancel() {
+			clearTimeout(timeoutHandle);
 			cancelAnimationFrame(animationFrameHandle);
-			animationFrameHandle = null;
+			timeoutHandle = 0;
+			animationFrameHandle = 0;
 		},
 
 		get active() {
-			return animationFrameHandle !== null;
+			return animationFrameHandle !== 0;
 		},
 		set active(value) {
-			if (value) {
+			if (value && !this.active) {
 				this.tick();
 			} else {
 				this.cancel();
